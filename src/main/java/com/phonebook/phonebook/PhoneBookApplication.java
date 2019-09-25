@@ -1,3 +1,6 @@
+/*
+This Just a simple app for test Spring-Boot , Hibernate adn Restful !
+*/
 package com.phonebook.phonebook;
 
 import org.springframework.boot.SpringApplication;
