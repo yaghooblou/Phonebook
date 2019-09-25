@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:trth="http://www.w3.org/1999/html">
+<head th:insert="fragment/header.html::header">
+</head>
+<body>
+<th:block th:insert="fragment/header.html::navbar"></th:block>
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <!--/*@thymesVar id="userI" type="com.phonebook.phonebook.entity.User"*/-->
+        <h3 th:text="${userI.getName()}+ ' ' +${userI.getFamily()}" class="display-5"></h3>
+        <p class="lead">Phone List</p>
+    </div>
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Detail</th>
+    </tr>
+    </thead>
+    <tbody id="myTable">
+    <tr th:each="phone,iState:${phones}">
+        <td th:text="${iState.index+1}" scope="row"></td>
+        <td th:text="${phone.getTitle()}"></td>
+        <td th:text="${phone.getPhone()}"></td>
+        <td>    <input type="text" name="userId" th:value="${phone.getPhone_id()}" hidden/>
+                <button type="button"  th:data-id="${phone.getPhone_id()}" th:data-title="${phone.getTitle()}" th:data-phone="${phone.getPhone()}" data-toggle="modal" data-target="#updatePhone" class="btn btn-success btn-xs">Update</button>
+                <a value="Remove" type="button" class="btn btn-danger btn-xs" th:href="@{'/phonebook/detail/deletephone?id='+${phone.getPhone_id()}+'&userId='+${userI.getUser_id()}}">Remove</a>
+        </td>
+    </tr>
+    </tbody>
+
+    <!-- Add Phone Form -->
+    <div class="modal" tabindex="-1" role="dialog" id="newPhone">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Person</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="/phonebook/detail/newphone">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Title And Phone</span>
+                            </div>
+                            <input type="text" name="userId" th:value="${userI.getUser_id()}" hidden/>
+                            <input type="text" class="form-control" name="title" placeholder="Enter Title" required>
+                            <input type="text" class="form-control" name="phone" placeholder="Enter Phone" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Add Phone</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Phone Form -->
+    <div class="modal" tabindex="-1" role="dialog" id="updatePhone">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Phone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="/phonebook/detail/updatephone">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Title And Phone</span>
+                            </div>
+                            <input type="text" class="form-control" id="userid" name="userId" th:value="${userI.getUser_id()}" hidden required/>
+                            <input type="text" class="form-control"id="phoneid" name="id" hidden required/>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title" required>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Add Phone</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </tbody>
+</table>
+<!-- Modal AutoFill JQuery -->
+<th:block th:insert="fragment/header.html::jQuery"></th:block>
+<script>
+    $('#updatePhone').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var tmpid = button.data('id')
+        var tmptitle = button.data('title')
+        var tmpphone = button.data('phone')// Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('#phoneid').val(tmpid)
+        modal.find('#title').val(tmptitle)
+        modal.find('#phone').val(tmpphone)
+    })
+</script>
+</body>
+</html>

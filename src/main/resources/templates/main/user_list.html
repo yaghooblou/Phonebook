@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragment/header.html::header">
+</head>
+<body>
+<th:block th:insert="fragment/header.html::navbar"></th:block>
+
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Detail</th>
+    </tr>
+    </thead>
+    <tbody id="myTable">
+    <tr th:each="user,iState:${puser}">
+        <td th:text="${iState.index+1}" scope="row"></td>
+        <td th:text="${user.getName()}"></td>
+        <td th:text="${user.getFamily()}"></td>
+        <td>
+                <form method="post" action="/phonebook/detail" >
+                    <input type="text" name="userId" th:value="${user.getUser_id()}" hidden/>
+                    <button type="submit" class="btn btn-info btn-xs">Detail</button>
+                    <button type="button"  th:data-userid="${user.getUser_id()}" th:data-username="${user.getName()}" th:data-userfamily="${user.getFamily()}" data-toggle="modal" data-target="#updateUser" class="btn btn-success btn-xs">Update</button>
+                    <a type="button" class="btn btn-danger btn-xs" th:href="@{'/phonebook/deleteuser?id='+${user.getUser_id()}}">Remove</a>
+                </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Form For Update User -->
+<div class="modal fade" id="updateUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/phonebook//update_user">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">First and last name</span>
+                            </div>
+                            <input type="text" class="form-control" id="id" name="id" hidden required>
+                            <input type="text" class="form-control" id="name"  name="name" required>
+                            <input type="text" class="form-control" id="family"  name="family" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal AutoFill JQuery -->
+<th:block th:insert="fragment/header.html::jQuery"></th:block>
+<script>
+    $('#updateUser').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var tmpid = button.data('userid')
+        var tmpname = button.data('username')
+        var tmpfamily = button.data('userfamily')// Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('#id').val(tmpid)
+        modal.find('#name').val(tmpname)
+        modal.find('#family').val(tmpfamily)
+    })
+</script>
+
+</body>
+</html>
